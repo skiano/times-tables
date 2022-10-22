@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Times tables</title>
+  <style>
+    main {
+      padding: 15px;
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    .keyboard {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .keyboard__row {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+
+    .keyboard__key {
+      flex-basis: 0;
+      flex-grow: 1;
+      padding: 18px 6px;
+      font-weight: bold;
+      background: #eee;
+      border: none;
+      outline: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 5px;
+      color: blue;
+      transition: all 250ms ease;
+    }
+
+    .keyboard__key--main {
+      background: #222;
+      color: #fff;
+    }
+
+    #question {
+      font-size: 42px;
+      text-align: center;
+      margin: 30px auto;
+    }
+
+    #answer {
+      font-size: 25px;
+      text-align: center;
+      margin: 15px auto;
+      color: blue;
+    }
+
+    .press {
+      background: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="question">
+      5 × 3
+    </div>
+
+    <div id="answer">
+      15
+    </div>
+
+    <div class="keyboard">
+      <div class="keyboard__row">
+        <button class="keyboard__key" data-value="1">1</button>
+        <button class="keyboard__key" data-value="2">2</button>
+        <button class="keyboard__key" data-value="3">3</button>
+      </div>
+      <div class="keyboard__row">
+        <button class="keyboard__key" data-value="4">4</button>
+        <button class="keyboard__key" data-value="5">5</button>
+        <button class="keyboard__key" data-value="6">6</button>
+      </div>
+      <div class="keyboard__row">
+        <button class="keyboard__key" data-value="7">7</button>
+        <button class="keyboard__key" data-value="8">8</button>
+        <button class="keyboard__key" data-value="9">9</button>
+      </div>
+      <div class="keyboard__row">
+        <button class="keyboard__key keyboard__key--main" data-value="enter">Enter</button>
+        <button class="keyboard__key" data-value="0">0</button>
+        <button class="keyboard__key" data-value="delete">Delete</button>
+      </div>
+      
+    </div>
+  </main>
+
+  <script type="module">
+    const state = new Proxy({
+      digits: [],
+      problem: {},
+    }, {
+      set(target, k, v) {
+        target[k] = v;
+        updateUI();
+        return target;
+      }
+    });
+
+    const question = document.getElementById('question');
+    const answer = document.getElementById('answer');
+    function updateUI() {
+      answer.innerHTML = state.digits.join('') || '...';
+    }
+    updateUI();
+
+    document.body.addEventListener('pointerdown', async (evt) => {
+      const { value } = evt.target.dataset;
+      if (value) {
+        evt.target.classList.add('press');
+        switch (value) {
+          case 'enter':
+            console.log('enter', parseInt(state.digits.join('')))
+            state.digits = [];
+            break;
+          case 'delete':
+            state.digits = state.digits.slice(0, -1);
+            break;
+          default:
+            state.digits = [...state.digits, value];
+        }
+      }
+    });
+
+    document.body.addEventListener('pointerup', (evt) => {
+      if (evt.target.dataset.value) {
+        evt.target.classList.remove('press');
+      }
+    });
+  </script>
+</body>
+</html>
