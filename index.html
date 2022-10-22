@@ -68,10 +68,35 @@
     input[type="button"]{
       touch-action: manipulation;
     }
+
+    @keyframes float-out {
+      0% {
+        transform: translate(0,  30px);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(0, -40px);
+        opacity: 0.001;
+      }   
+    }
+
+    .float {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      text-align: center;
+      font-size: 80px;
+      animation-name: float-out;
+      animation-duration: 1000ms;
+      animation-timing-function: ease-out;
+    }
   </style>
 </head>
 <body>
   <main>
+    <div id="feedback"></div>
+
     <div id="question"></div>
     <div id="answer"></div>
 
@@ -127,11 +152,26 @@
 
     const question = document.getElementById('question');
     const answer = document.getElementById('answer');
+    const feedback = document.getElementById('feedback');
+
     function updateUI() {
       question.innerHTML = Object.keys(state.question)[0];
       answer.innerHTML = state.digits.join('') || '...';
     }
     updateUI();
+
+    function giveFeedback(txt) {
+      return new Promise((resolve) => {
+        const n = document.createElement('span');
+        n.innerHTML = txt;
+        n.classList.add('float');
+        n.addEventListener('animationend', () => {
+          resolve();
+          n.remove();
+        });
+        feedback.appendChild(n);
+      })
+    }
 
     document.body.addEventListener('pointerdown', async (evt) => {
       const { value } = evt.target.dataset;
@@ -141,9 +181,15 @@
         switch (value) {
           case 'enter':
             const answer = parseInt(state.digits.join(''));
-            console.log('correct?', answer === Object.values(state.question)[0])
-            state.question = poseQuestion();
-            state.digits = [];
+            const isCorrect = answer === Object.values(state.question)[0];
+            if (isCorrect) {
+              await giveFeedback('👍');
+              state.question = poseQuestion();
+              state.digits = [];
+            } else {
+              await giveFeedback('🚫');
+              state.digits = [];
+            }
             break;
           case 'delete':
             state.digits = state.digits.slice(0, -1);
