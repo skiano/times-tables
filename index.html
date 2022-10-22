@@ -91,6 +91,21 @@
       animation-duration: 1000ms;
       animation-timing-function: ease-out;
     }
+
+    label {
+      display: block;
+      margin-top: 40px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    select {
+      padding: 10px;
+      background: rgba(53, 6, 6, 0.8);
+      border-radius: 5px;
+      color: #fff;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -122,6 +137,24 @@
         <button class="keyboard__key" data-value="delete">Del</button>
       </div>
       
+      <label for="table-select">Which number?</label>
+      <select id="table-select">
+        <option>Any</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+      </select>
+
     </div>
   </main>
 
