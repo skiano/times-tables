@@ -72,13 +72,8 @@
 </head>
 <body>
   <main>
-    <div id="question">
-      5 × 3
-    </div>
-
-    <div id="answer">
-      15
-    </div>
+    <div id="question"></div>
+    <div id="answer"></div>
 
     <div class="keyboard">
       <div class="keyboard__row">
@@ -106,9 +101,22 @@
   </main>
 
   <script type="module">
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function poseQuestion() {
+      const a = getRandomInt(2, 15);
+      const b = getRandomInt(2, 15);
+      const c = a * b;
+      return (Math.random() < 0.2) ? { [`${c} ÷ ${b}`] : a } : { [`${a} × ${b}`] : c };
+    }
+
     const state = new Proxy({
       digits: [],
-      problem: {},
+      question: poseQuestion(),
     }, {
       set(target, k, v) {
         target[k] = v;
@@ -120,6 +128,7 @@
     const question = document.getElementById('question');
     const answer = document.getElementById('answer');
     function updateUI() {
+      question.innerHTML = Object.keys(state.question)[0];
       answer.innerHTML = state.digits.join('') || '...';
     }
     updateUI();
@@ -131,7 +140,9 @@
         evt.preventDefault();
         switch (value) {
           case 'enter':
-            console.log('enter', parseInt(state.digits.join('')))
+            const answer = parseInt(state.digits.join(''));
+            console.log('correct?', answer === Object.values(state.question)[0])
+            state.question = poseQuestion();
             state.digits = [];
             break;
           case 'delete':
