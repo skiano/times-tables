@@ -139,7 +139,7 @@
       
       <label for="table-select">Which number?</label>
       <select id="table-select">
-        <option>Any</option>
+        <option value="">Any</option>
         <option value="3">3</option>
         <option value="4">4</option>
         <option value="5">5</option>
@@ -159,6 +159,11 @@
   </main>
 
   <script type="module">
+    const question = document.getElementById('question');
+    const answer = document.getElementById('answer');
+    const feedback = document.getElementById('feedback');
+    const tableSelect = document.getElementById('table-select');
+
     function getRandomInt(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
@@ -166,10 +171,10 @@
     }
 
     function poseQuestion() {
-      const a = getRandomInt(2, 15);
+      const a = parseInt(tableSelect.value) || getRandomInt(2, 15);
       const b = getRandomInt(2, 15);
       const c = a * b;
-      return (Math.random() < 0.2) ? { [`${c} ÷ ${b}`] : a } : { [`${a} × ${b}`] : c };
+      return (Math.random() < 0.2) ? { [`${c} ÷ ${a}`] : b } : { [`${a} × ${b}`] : c };
     }
 
     const state = new Proxy({
@@ -182,10 +187,6 @@
         return target;
       }
     });
-
-    const question = document.getElementById('question');
-    const answer = document.getElementById('answer');
-    const feedback = document.getElementById('feedback');
 
     function updateUI() {
       question.innerHTML = Object.keys(state.question)[0];
@@ -205,6 +206,10 @@
         feedback.appendChild(n);
       })
     }
+
+    tableSelect.addEventListener('change', () => {
+      state.question = poseQuestion();
+    })
 
     document.body.addEventListener('pointerdown', async (evt) => {
       const { value } = evt.target.dataset;
